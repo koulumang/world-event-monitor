@@ -5,6 +5,7 @@ import { fetchStorms }      from './layers/storms.js';
 import { fetchFloods }      from './layers/floods.js';
 import { fetchGDELT, fetchDisease } from './layers/gdelt.js';
 import { fetchAirQuality }  from './layers/airquality.js';
+import { fetchFIRMS }       from './layers/firms.js';
 
 // ── Layer registry ────────────────────────────────────────────────
 const LAYERS = [
@@ -12,6 +13,7 @@ const LAYERS = [
   { key: 'disease',     label: 'Disease / Outbreak',color: '#AA00FF', fetch: fetchDisease,     refresh: 1_800_000,render: renderGDELT       },
   { key: 'earthquakes', label: 'Earthquakes',       color: '#FF6B00', fetch: fetchEarthquakes, refresh: 60_000,   render: renderEarthquakes },
   { key: 'wildfires',   label: 'Wildfires',         color: '#FFD700', fetch: fetchWildfires,   refresh: 300_000,  render: renderEONET       },
+  { key: 'firms',       label: 'Active Fires (sat)',color: '#FF3D00', fetch: fetchFIRMS,       refresh: 600_000,  render: renderFIRMS       },
   { key: 'volcanoes',   label: 'Volcanoes',         color: '#C62828', fetch: fetchVolcanoes,   refresh: 300_000,  render: renderEONET       },
   { key: 'storms',      label: 'Severe Storms',     color: '#00E5FF', fetch: fetchStorms,      refresh: 300_000,  render: renderStorms      },
   { key: 'floods',      label: 'Floods',            color: '#1565C0', fetch: fetchFloods,      refresh: 300_000,  render: renderEONET       },
@@ -146,6 +148,27 @@ function renderGDELT(key, items, color) {
     marker.bindTooltip(darkTip(
       item.name || 'Incident',
       [fmtTime(item.date)].concat(item.counts ? [`${item.counts} report${item.counts > 1 ? 's' : ''}`] : [])
+    ), { className: 'dark-tip', direction: 'top', sticky: false });
+    marker.addTo(layerGroups[key]);
+  });
+}
+
+function renderFIRMS(key, items, color) {
+  items.forEach(item => {
+    const radius = Math.max(4, Math.min(18, Math.log10(item.frp + 1) * 6));
+    const marker = L.marker([item.lat, item.lon], {
+      icon: makePulseIcon(color, radius, '1.8s'),
+    });
+    const confLabel = { h: 'High', n: 'Nominal', l: 'Low' }[item.confidence] || item.confidence;
+    marker.bindTooltip(darkTip(
+      `Active Fire — ${item.satellite || 'VIIRS'}`,
+      [
+        `FRP: ${item.frp.toFixed(1)} MW`,
+        item.bright ? `Brightness: ${item.bright.toFixed(0)} K` : null,
+        `Confidence: ${confLabel}`,
+        item.daynight === 'D' ? 'Daytime' : item.daynight === 'N' ? 'Nighttime' : null,
+        fmtTime(item.date),
+      ].filter(Boolean)
     ), { className: 'dark-tip', direction: 'top', sticky: false });
     marker.addTo(layerGroups[key]);
   });
