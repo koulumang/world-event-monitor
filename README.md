@@ -24,6 +24,7 @@ A real-time global dashboard that plots natural disasters, conflicts, outbreaks,
 | Volcanoes            | NASA EONET                                | 5 min   |
 | Severe Storms        | NASA EONET                                | 5 min   |
 | NWS Alerts (US)      | [NOAA NWS](https://www.weather.gov/documentation/services-web-api) | 5 min   |
+| GDACS (Global)       | [GDACS](https://www.gdacs.org/)           | 10 min  |
 | Floods               | NASA EONET                                | 5 min   |
 | Crime / Conflict     | [GDELT 2.0](https://www.gdeltproject.org/) | 15 min  |
 | Disease / Outbreak   | GDELT 2.0                                 | 30 min  |
@@ -79,6 +80,7 @@ Then open [http://localhost:8000](http://localhost:8000).
     ├── volcanoes.js     # EONET volcanoes
     ├── storms.js        # EONET severe storms
     ├── nws.js            # NOAA NWS active severe-weather alerts (US)
+    ├── gdacs.js          # GDACS global disaster alerts (EQ, TC, FL, VO, DR, WF)
     ├── floods.js        # EONET floods
     ├── gdelt.js         # GDELT events + disease queries
     └── airquality.js    # WAQI
