@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>World Event Monitor</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Orbitron:wght@500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <header id="topbar">
+    <div id="title">
+      <span class="title-dot"></span>
+      WORLD EVENT MONITOR
+    </div>
+    <div id="topbar-right">
+      <span id="total-events">0 events tracked</span>
+      <span id="clock"></span>
+    </div>
+  </header>
+
+  <main id="layout">
+
+    <aside id="controls">
+      <div id="controls-inner">
+        <div class="section-label">LAYERS</div>
+        <div id="layer-list"></div>
+
+        <div class="section-label" style="margin-top:20px">LIVE STATS</div>
+        <div id="stats-list"></div>
+
+        <div class="section-label" style="margin-top:20px">STATUS</div>
+        <div id="status-log"></div>
+      </div>
+    </aside>
+
+    <div id="map"></div>
+
+    <aside id="feed">
+      <div class="section-label">LIVE FEED</div>
+      <ul id="feed-list"></ul>
+    </aside>
+
+  </main>
+
+  <div id="ticker-bar">
+    <span id="ticker-label">LIVE</span>
+    <div id="ticker-wrap">
+      <div id="ticker-content">Initializing data feeds...</div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
