@@ -6,6 +6,7 @@ import { fetchFloods }      from './layers/floods.js';
 import { fetchGDELT, fetchDisease } from './layers/gdelt.js';
 import { fetchAirQuality }  from './layers/airquality.js';
 import { fetchFIRMS }       from './layers/firms.js';
+import { fetchNWS }         from './layers/nws.js';
 
 // ── Layer registry ────────────────────────────────────────────────
 const LAYERS = [
@@ -16,6 +17,7 @@ const LAYERS = [
   { key: 'firms',       label: 'Active Fires (sat)',color: '#FF3D00', fetch: fetchFIRMS,       refresh: 600_000,  render: renderFIRMS       },
   { key: 'volcanoes',   label: 'Volcanoes',         color: '#C62828', fetch: fetchVolcanoes,   refresh: 300_000,  render: renderEONET       },
   { key: 'storms',      label: 'Severe Storms',     color: '#00E5FF', fetch: fetchStorms,      refresh: 300_000,  render: renderStorms      },
+  { key: 'nws',         label: 'NWS Alerts (US)',   color: '#FFEB3B', fetch: fetchNWS,         refresh: 300_000,  render: renderNWS         },
   { key: 'floods',      label: 'Floods',            color: '#1565C0', fetch: fetchFloods,      refresh: 300_000,  render: renderEONET       },
   { key: 'airquality',  label: 'Air Quality',       color: '#00E676', fetch: fetchAirQuality,  refresh: 600_000,  render: renderAirQuality  },
 ];
@@ -168,6 +170,28 @@ function renderFIRMS(key, items, color) {
         `Confidence: ${confLabel}`,
         item.daynight === 'D' ? 'Daytime' : item.daynight === 'N' ? 'Nighttime' : null,
         fmtTime(item.date),
+      ].filter(Boolean)
+    ), { className: 'dark-tip', direction: 'top', sticky: false });
+    marker.addTo(layerGroups[key]);
+  });
+}
+
+function renderNWS(key, items, color) {
+  const sevSize = { Extreme: 18, Severe: 13, Moderate: 9 };
+  const sevColor = { Extreme: '#FF1744', Severe: '#FF9100', Moderate: color };
+  items.forEach(item => {
+    const radius = sevSize[item.severity] || 8;
+    const col    = sevColor[item.severity] || color;
+    const marker = L.marker([item.lat, item.lon], {
+      icon: makePulseIcon(col, radius, item.severity === 'Extreme' ? '1.2s' : '2s'),
+    });
+    marker.bindTooltip(darkTip(
+      item.title,
+      [
+        item.area,
+        `Severity: ${item.severity} · Urgency: ${item.urgency}`,
+        item.expires ? `Expires: ${fmtTime(item.expires)}` : null,
+        item.sender,
       ].filter(Boolean)
     ), { className: 'dark-tip', direction: 'top', sticky: false });
     marker.addTo(layerGroups[key]);
